@@ -1,0 +1,54 @@
+---
+- name: install and configuration to become a vimmer
+  block:
+    - name: create ~/.vim directory
+      file:
+        path: "{{ ansible_env.HOME }}/.vim"
+        state: directory
+
+    - name: create symlink of .vimrc
+      copy:
+        src: .vimrc
+        dest: "{{ ansible_env.HOME }}/.vimrc"
+
+    - name: create ~/.vim/vim_tab.vim
+      copy:
+        src: vim_tab.vim
+        dest: "{{ ansible_env.HOME }}/.vim/vim_tab.vim"
+
+    # https://github.com/Shougo/dein.vim
+    - name: install Shougo/dein.vim
+      shell: >
+        curl -s https://raw.githubusercontent.com/Shougo/dein.vim/master/bin/installer.sh > /tmp/installer.sh && \
+        bash /tmp/installer.sh ~/.cache/dein
+
+    - name: pip install
+      pip:
+        name: "{{ item }}"
+      with_items:
+        - flake8
+        - pyflakes
+        - pep8
+        - pylint
+        - jedi
+        - python-language-server
+
+    - name: install the_silver_searcher via homebrew
+      homebrew:
+        name: the_silver_searcher
+        state: present
+      when: ansible_os_family == 'Darwin'
+
+    - name: install the_silver_searcher via apt
+      apt:
+        name: the_silver_searcher
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: install the_silver_searcher via yum
+      yum:
+        name: the_silver_searcher
+        state: present
+      when: (ansible_os_family == 'Amazon') or
+            (ansible_os_family == 'CentOS') or
+            (ansible_os_family == 'RedHat')

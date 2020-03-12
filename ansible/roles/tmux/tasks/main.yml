@@ -1,0 +1,39 @@
+---
+- name: create ~/.tmux/plugins
+  file:
+    path: "{{ ansible_env.HOME }}/.tmux/plugins"
+    state: directory
+    recurse: yes
+
+# https://github.com/tmux-plugins/tpm
+- name: install tpm(tmux plugin manager)
+  git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
+
+- name: create symlink of .tmux.conf
+  copy:
+    src: .tmux.conf
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+
+- name: install tpm plugins
+  block:
+    - name: create shell script to install tpm plugins
+      copy:
+        mode: 0755
+        dest: "{{ ansible_env.HOME }}/.tmux/install_tpm_plugins.sh"
+        content: |
+          #!/bin/bash
+          tmux new-session -d -s plugin_install_session
+          sleep 2
+          tmux send-keys -t plugin_install_session "{{ ansible_env.HOME }}/.tmux/plugins/tpm/bin/install_plugins 2>&1 >> {{ ansible_env.HOME }}/.tmux/tpm_install_plugins.log" C-m
+          sleep 2
+          while true; do
+            count=`ps aux | grep 'tpm/bin/install_plugins' | grep -v 'grep' | wc -l`
+            if [ "${count}" -eq 0 ]; then
+              break
+            fi
+          done
+          tmux kill-session -t plugin_install_session
+    - name: install process
+      shell: "{{ ansible_env.HOME }}/.tmux/install_tpm_plugins.sh"

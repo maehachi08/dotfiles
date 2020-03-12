@@ -1,0 +1,11 @@
+---
+- name: configuration dotfiles
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  # become: true
+  vars:
+    HOME_DIR: ''
+  roles:
+    - roles/tmux
+    - roles/vim

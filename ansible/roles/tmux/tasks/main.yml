@@ -1,4 +1,10 @@
 ---
+- name: pip install
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - powerline-status
+
 - name: create ~/.tmux/plugins
   file:
     path: "{{ ansible_env.HOME }}/.tmux/plugins"
@@ -37,3 +43,4 @@
           tmux kill-session -t plugin_install_session
     - name: install process
       shell: "{{ ansible_env.HOME }}/.tmux/install_tpm_plugins.sh"
+      ignore_errors: yes

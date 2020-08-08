@@ -1,10 +1,17 @@
 # tmux source-file ~/.tmux.conf
-
-# git clone https://github.com/arl/tmux-gitbar.git ~/.tmux/plugins/tmux-gitbar
-# setenv TMUX_GITBAR_DIR "$HOME/.tmux/plugins/tmux-gitbar"
-# source-file "$HOME/.tmux/plugins/tmux-gitbar/tmux-gitbar.tmux"
-
-source "${HOME}/.pyenv/versions/$(cat ${HOME}/.pyenv/version)/lib/python3.7/site-packages/powerline/bindings/tmux/powerline.conf
+#
+# Tips: tmux versionによる分岐
+#   tmux versionを ${TMUX_VERSION} へセット
+#   run-shell "tmux setenv -g TMUX_VERSION $(tmux -V | cut -c 6-)"
+#   if-shell -b '[ "$(echo "$TMUX_VERSION < 1.9" | bc)" -eq 1 ]' \
+#     'set-option -g pane-border-fg colour023 \
+#     set-option -g pane-active-border-fg blue'
+#     'set -ag status-style fg="colour023" \
+#     set -ag pane-active-border-style fg="blue"'
+#
+# Tips: tmuxステータスバーでgitの情報を表示する
+# https://github.com/arl/gitmux
+source-file {{ powerline_conf_path }}
 
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
@@ -25,5 +32,5 @@ setw -g pane-base-index 1
 
 set-option -g pane-border-status bottom
 set-option -g pane-border-format "#[fg=black,bg=blue] #P #(tmux-pane-border '#{pane_current_path}')"
-set-option -g pane-border-fg colour023
-set-option -g pane-active-border-fg blue
+set -ag status-style fg="colour023"
+set -ag pane-active-border-style fg="blue"

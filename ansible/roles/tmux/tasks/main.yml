@@ -5,6 +5,14 @@
   with_items:
     - powerline-status
 
+- name: set powerline.conf path
+  block:
+    - shell: find `pip show powerline-status | grep Location | awk '{print $2}'` -type f -name powerline.conf
+      register: find_command_result
+    - set_fact:
+        powerline_conf_path={{ find_command_result.stdout }}
+
+
 - name: create ~/.tmux/plugins
   file:
     path: "{{ ansible_env.HOME }}/.tmux/plugins"
@@ -17,9 +25,9 @@
     repo: https://github.com/tmux-plugins/tpm
     dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
 
-- name: create symlink of .tmux.conf
-  copy:
-    src: .tmux.conf
+- name: create ~/.tmux.conf
+  template:
+    src: .tmux.conf.j2
     dest: "{{ ansible_env.HOME }}/.tmux.conf"
 
 - name: install tpm plugins

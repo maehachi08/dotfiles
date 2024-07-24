@@ -1,0 +1,26 @@
+{
+  "languageserver": {
+      "groovy": {
+          "command": "java",
+          "args" : ["-jar", "~/.config/coc/extensions/node_modules/coc-groovy/server/groovy-language-server-all.jar"],
+          "filetypes": ["groovy"]
+      },
+      "terraform": {
+          "command": "terraform-ls",
+          "args": ["serve"],
+          "filetypes": [
+              "terraform",
+              "tf"
+          ],
+          "initializationOptions": {
+              "ignoreSingleFileWarning": true,
+          },
+          "settings": {},
+      }
+  },
+  "jedi": {
+    "enable": true,
+    "startupMessage": false,
+    "executable.command": "~/.pyenv/shims/jedi-language-server"
+  },
+}
